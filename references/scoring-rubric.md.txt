@@ -1,0 +1,70 @@
+# Scoring Rubric Reference
+
+This file helps calibrate self-assessment during the Q&A self-test phase.
+
+---
+
+## Score Definitions
+
+| Score | Label | Points | When to use |
+|-------|-------|--------|-------------|
+| ✅ STRONG | Full marks | 2 | Answer is complete, accurate, includes an example, and could stand alone without clarification |
+| 🟡 ACCEPTABLE | Half-minus | 1 | Answer is mostly correct but missing a key detail, example, or nuance — a knowledgeable person would want to add something |
+| 🟠 WEAK | Quarter | 0.5 | Answer exists but is vague, circular, missing the mechanism, or only partially correct |
+| ❌ FAILED | Zero | 0 | No answer, answer is wrong, answer is "I don't know", or answer reveals a misconception |
+
+---
+
+## Anti-Inflation Rules
+
+These protect against the loop ending too soon with false confidence:
+
+1. **No example = not STRONG**. If the question type is "explain" or "how does X work" and your answer has no concrete example, cap at ACCEPTABLE.
+2. **Circular definition = WEAK or FAILED**. "X is the process of X-ing" is not an answer.
+3. **Hedging without substance = WEAK**. "It depends on many factors" without naming the factors = WEAK.
+4. **Correct but shallow = ACCEPTABLE**. If you got the right answer but would struggle to elaborate, it's not STRONG.
+5. **Memorized phrase without understanding = WEAK**. If you can recite a definition but couldn't explain it to a 12-year-old in different words, mark it WEAK.
+
+---
+
+## Gap Classification Guide
+
+| Tag | Meaning | Search Strategy |
+|-----|---------|-----------------|
+| `[MISSING_FACT]` | A specific fact/figure/name you don't know | Direct search: "X fact/data/stat" |
+| `[SHALLOW_UNDERSTANDING]` | You know *what* but not *why* or *how* | Search: "how does X work mechanism" or "why does X happen" |
+| `[NO_EXAMPLE]` | Concept understood but no concrete example | Search: "X real world example" or "X case study" |
+| `[CONTRADICTORY]` | Two sources or your own answers conflict | Search: "X vs Y difference" or "is X actually Y" |
+| `[UNKNOWN_UNKNOWN]` | A question you couldn't even attempt — suggests a whole missing subtopic | Broad search on the question's subtopic area |
+
+---
+
+## Confidence Threshold Guide
+
+| Threshold | What it means | Use when |
+|-----------|--------------|----------|
+| 70% | Working familiarity — can hold a basic conversation | Quick overview, time-limited |
+| 80% | Solid understanding — can explain to others | General learning, preparing for discussion |
+| 85% (default) | Strong command — can answer most questions without hesitation | Standard mastery goal |
+| 90% | Deep mastery — can handle edge cases and nuances | High-stakes: exam prep, professional application |
+| 95%+ | Expert-level — diminishing returns likely after iteration 5 | Research-level depth required |
+
+---
+
+## Iteration Budget Guide
+
+| Iterations used | Interpretation |
+|----------------|----------------|
+| 1–2 | Topic was simple or narrow |
+| 3–4 | Normal for intermediate topics |
+| 5–6 | Complex topic or wide scope |
+| 7–8 | Very broad/deep topic — consider narrowing scope |
+| 8 (cap) | Stop here regardless; note remaining gaps honestly |
+
+---
+
+## Score Trajectory Check
+
+At each iteration, verify the score is **improving**:
+- If `score[N] < score[N-1]` — something went wrong (KB regression). Review what changed and fix it before continuing.
+- If `score[N] == score[N-1]` for 2 iterations — diminishing returns. Either the remaining gaps are fundamentally hard to fill (note them) or the search strategy needs to change.

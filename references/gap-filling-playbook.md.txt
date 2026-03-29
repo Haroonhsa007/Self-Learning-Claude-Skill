@@ -1,0 +1,215 @@
+# Gap-Filling Playbook — Deep Tactics for Every Gap Type
+
+Read this file when a gap is proving difficult to close, or when you want to maximize
+the quality of gap-filling before the next self-test round.
+
+---
+
+## The Goal of Gap-Filling
+
+Every gap represents a specific failure in the knowledge base. The goal is not just to
+"add something" — it's to find the *specific content* that would turn a WEAK or FAILED
+answer into a STRONG answer. Keep that standard in mind for each gap.
+
+A gap is "closed" when:
+1. The specific missing content has been found from at least one Tier 1 or Tier 2 source
+2. The content has been added to the KB with proper sourcing
+3. You can now answer the original question at STRONG level
+
+A gap is "partially closed" (WEAK → ACCEPTABLE) when:
+- Content was found but only from Tier 3 sources (unverified)
+- Content was found but needs corroboration
+
+---
+
+## Gap Type: MISSING_FACT
+
+**What it means**: A specific fact, figure, name, date, or statistic is unknown.
+
+**Tactics**:
+1. Search for the exact fact: `"[fact query]"` (quoted search for specificity)
+2. Try multiple phrasings: the fact may be described in different ways across sources
+3. Look for primary sources: official statistics, original reports, the entity that produced the data
+4. For historical facts: search specifically for "history of [topic]" or "[topic] timeline"
+5. For statistics: look for government data, academic studies, industry reports — not secondary aggregators
+6. If the fact seems to have changed over time, search for both the historical and current value
+
+**Quality bar**: A MISSING_FACT gap is only closed when the fact is found in a named, credible source. "I inferred it" is not closed.
+
+**Common mistake**: Finding a Tier 3 source that states the fact, but not finding the original source it's citing. Push through to the primary source.
+
+---
+
+## Gap Type: SHALLOW_UNDERSTANDING
+
+**What it means**: You know *what* something is but not *why* or *how* it works. The answer is definitional but lacks mechanism.
+
+**Tactics**:
+1. Search `"how does [concept] actually work"` — "actually" often surfaces more mechanistic explanations
+2. Search `"[concept] step by step"` — process-level explanations
+3. Search `"[concept] mechanism"` — scientific/technical framing
+4. Search `"[concept] explained simply"` — analogies that reveal structure
+5. Search `"[concept] for engineers"` / `"[concept] for practitioners"` — operational explanations
+6. Look for Stack Exchange answers — these often explain mechanisms with great precision
+7. Look for course lecture notes — instructors must explain mechanisms, not just define terms
+
+**Quality bar**: The gap is closed when you can answer "why" or "how" concretely — not just say "it works by doing X" but explain the causal chain or process that makes X happen.
+
+**Common mistake**: Accepting a metaphor as a mechanism. "It works like a filter" is not a mechanism — what physically/logically happens that achieves the filtering effect?
+
+---
+
+## Gap Type: NO_EXAMPLE
+
+**What it means**: A concept is understood in the abstract but cannot be grounded in a real-world case.
+
+**Tactics**:
+1. Search `"[concept] example"` — the most direct approach
+2. Search `"[concept] case study"` — documented real-world applications
+3. Search `"[concept] in practice"` — practitioner descriptions
+4. Search `"[concept] real world application"` — applied examples
+5. For historical concepts: search `"historical example of [concept]"`
+6. For technical concepts: look for Stack Overflow code examples or tutorial examples
+7. For scientific concepts: look for the experiments or observations that demonstrated it
+8. Ask: who uses this? Search for `"[industry/profession] uses [concept]"` — specific named examples
+
+**Quality bar**: The example must be: (a) real (not invented), (b) named (specific person, company, event, or case), (c) concrete (shows the concept in action, not just mentions it), (d) sourced.
+
+**Common mistake**: Using a vague or generic example ("for example, a company might use this to improve efficiency"). This is not an example — it's a hypothetical. Find a real, named case.
+
+---
+
+## Gap Type: CONTRADICTORY
+
+**What it means**: Two or more sources make opposing claims about the same fact or concept.
+
+**Tactics**:
+1. Search `"[claim A] vs [claim B]"` — direct comparison may exist
+2. Search for academic meta-analyses or systematic reviews that have synthesized the conflicting research
+3. Check the dates: sometimes conflicts are temporal (older understanding vs. newer finding)
+4. Check the domains: sometimes conflicts are definitional (two fields use the same term differently)
+5. Check the tiers: Tier 1 vs. Tier 3 conflict often resolves in favor of Tier 1
+6. Search `"[topic] scientific consensus"` — to find if the field has converged on an answer
+7. Look for review articles that explicitly address the controversy
+8. Check if the conflict is a *false dichotomy* — sometimes both claims are correct in different contexts
+
+**Resolution options**:
+- **Resolved**: one position is clearly supported by stronger/more sources → document which one and why
+- **Context-dependent**: both are correct under different conditions → document the conditions
+- **Genuinely unresolved**: experts actively disagree → document both positions + sources + status in KB
+- **Terminological**: different definitions of the same term → document both definitions + contexts
+
+**Quality bar**: A CONTRADICTORY gap is not "closed" by picking one side arbitrarily. It's closed by either: (a) finding a resolution with stronger sourcing, or (b) fully documenting both sides as a legitimate ongoing debate.
+
+**Critical rule**: Never silently resolve a contradiction. Even if you believe one side is correct, the other position must appear in the KB — marked as [DISPUTED] with both sources shown.
+
+---
+
+## Gap Type: SINGLE_SOURCE
+
+**What it means**: A claim in the KB is backed by only one source, making it fragile and unverified.
+
+**Tactics**:
+1. Search for the same fact with completely different query phrasing
+2. Search for the original primary source the single source was citing
+3. Try a different source type (if the single source was Tier 3, look for a Tier 1 source on the same claim)
+4. If it's a statistical claim, find the original data release or study
+5. If it's an expert opinion, look for other experts who have made the same statement
+
+**Resolution options**:
+- **Verified**: second independent source confirms → mark `[VERIFIED]`, upgrade scoring potential
+- **Second source contradicts**: reclassify as CONTRADICTORY
+- **No second source found**: keep as `[SINGLE_SOURCE — unverified]` and note this in the KB
+
+**Quality bar**: At minimum, the single source should be Tier 1 or 2. A claim backed by only a Tier 3 source and no corroboration should be flagged prominently in the KB.
+
+---
+
+## Gap Type: OUTDATED
+
+**What it means**: The information in the KB may reflect an older understanding that has been superseded.
+
+**Tactics**:
+1. Search `"[concept] current understanding 2024 2025"` — most recent findings
+2. Search `"[concept] updated"` or `"[concept] revised"` — explicit updates to earlier views
+3. Search for the most recent systematic review or meta-analysis on the topic
+4. Search `"[concept] no longer"` or `"[concept] overturned"` — explicit reversals
+5. Look at the publication dates of your existing sources — if mostly 5+ years old, the field may have moved
+6. For rapidly evolving fields (AI, medicine, policy): search for news from the past 12 months specifically
+
+**Resolution types**:
+- **Superseded**: old understanding was wrong, new understanding replaces it → update KB, note the change
+- **Extended**: new research added nuance but didn't overturn the basics → add the nuance to KB
+- **Unchanged**: current sources confirm the older understanding still holds → mark as current + sources
+- **Actively evolving**: field is moving fast, no settled answer yet → note this in KB + debates section
+
+**Quality bar**: Don't just confirm recency — confirm what, if anything, has changed. "Still current as of [year] according to [source]" is a valid resolution.
+
+---
+
+## Gap Type: MISSING_MECHANISM
+
+**What it means**: The KB describes effects or outcomes but cannot explain the causal or procedural chain that produces them. Similar to SHALLOW_UNDERSTANDING but specifically about causality.
+
+**Tactics**:
+1. Search `"why does [effect] happen"` — direct causality query
+2. Search `"[concept] causes [outcome]"` — explicit causal framing
+3. Search `"[concept] pathway"` or `"[concept] process"` — process-oriented framing
+4. Look for textbook explanations — these are built around mechanisms
+5. Look for Wikipedia's "Mechanism" section (many science articles have one)
+6. For biological/chemical: search `"[concept] molecular mechanism"` or `"[concept] biochemical pathway"`
+7. For technical/engineering: search `"[concept] how it works internally"` or `"[concept] architecture"`
+8. For social/economic: search `"[concept] causal mechanism"` or `"why [concept] occurs"`
+
+**Quality bar**: The gap is closed when you can explain: given condition A, the following steps/processes occur (B → C → D) which produce outcome E. The chain should be complete enough that a gap in the chain is not simply hand-waved.
+
+---
+
+## Gap Type: COVERAGE_BIAS
+
+**What it means**: The KB reflects only one perspective, community, or school of thought. The self-critique detected that dissenting or alternative views are underrepresented.
+
+**Tactics**:
+1. Search `"criticism of [topic]"` — broad criticism sweep
+2. Search `"alternative to [topic]"` — competing approaches
+3. Search `"[topic] debate"` — known debates in the field
+4. Search `"[topic] from [different discipline]'s perspective"` — cross-disciplinary views
+5. Look for the intellectual *history* of the topic — early critics often had valid points
+6. Search for minority positions: `"minority view [topic]"`, `"heterodox [topic]"`, `"unconventional view [topic]"`
+7. Look at the "Criticism" or "Controversy" section of the topic's Wikipedia article
+8. For policy/social topics: look for perspectives from affected communities, not just academic researchers
+
+**Resolution**: Add a section or subsection in the KB for alternative/dissenting views. These must be represented fairly — not as fringe, not as obviously wrong, but as positions that thoughtful people hold with reasons.
+
+**Quality bar**: The KB should be able to represent the strongest version of the opposing argument (steelman, not strawman). If the "criticism" section only has weak criticisms, dig deeper.
+
+---
+
+## When a Gap Won't Close
+
+Sometimes a gap resists closure after multiple search attempts. Options:
+
+1. **Try a different source type** — if web searches haven't worked, try academic databases, forum searches, or expert blogs
+2. **Try historical framing** — sometimes the answer is in older literature: `"[topic] history"`, `"[concept] originally defined"`
+3. **Try definitional variation** — the concept may have different names in different fields
+4. **Accept and document** — after 5+ attempts with diverse queries and source types, mark the gap as `[UNRESOLVABLE — exhausted search]` and include it in the "Residual Uncertainty" section of the Mastery Report
+5. **Note implications** — a gap that can't be filled often means the knowledge genuinely doesn't exist, is paywalled, or is highly specialized. Document this honestly — it's a feature of intellectual integrity, not a failure.
+
+---
+
+## Gap Prioritization When Time/Iteration Budget Is Limited
+
+If approaching the hard cap (iteration 12) with gaps remaining:
+
+**Close these first (highest impact on confidence score):**
+1. FAILED questions on core concepts (highest score leverage)
+2. CONTRADICTORY gaps (unresolved contradictions undermine entire related Q&A cluster)
+3. MISSING_MECHANISM for Level 2 and Level 3 questions
+
+**Accept remaining uncertainty for:**
+1. LOW priority gaps on peripheral subtopics
+2. SINGLE_SOURCE claims on non-central facts
+3. OUTDATED information on topics where recency doesn't affect core understanding
+4. Cross-domain connections that are interesting but not central
+
+**Document all remaining gaps honestly in the Mastery Report.**
