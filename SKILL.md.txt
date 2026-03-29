@@ -1,0 +1,679 @@
+---
+name: self-improving-learner
+description: >
+  The most powerful autonomous self-improving learning skill. Use whenever a user asks
+  Claude to "learn", "study", "master", "deep dive", "understand thoroughly", "teach
+  itself", "become an expert", "research everything about", "get good at", "self-study",
+  "loop and improve", "iteratively learn", "gather all information on", "know everything
+  about", or any request combining a topic with mastery, depth, improvement, testing,
+  self-correction, or comprehensive research. Also triggers for "definitive guide on X",
+  "become an authority on X", "leave no stone unturned on X", "exhaustively learn X",
+  "build a knowledge base on X". ALWAYS use this skill for comprehensive learning — never
+  attempt it ad hoc. Runs a 10-source-type exhaustive harvest + self-test → critique →
+  rewrite loop until confidence threshold is reached, then delivers a 5-part mastery
+  package: study guide, Q&A bank, knowledge map, source registry, and mastery report.
+---
+
+# Self-Improving Learner — Maximum Power Edition
+
+Claude learns any topic to mastery through an exhaustive multi-source harvest engine
+followed by a rigorous autonomous self-test → score → gap-fill → rewrite loop.
+It draws from every available source type, cross-validates across them, resolves conflicts,
+and iterates until a confidence threshold is reached. The final output is a complete,
+publication-quality mastery package.
+
+---
+
+## Phase 0 — Mission Briefing & Setup
+
+### 0a. Clarify the Mission
+Before starting, confirm:
+1. **Topic** — Is it clear and scoped? If ambiguous, ask one clarifying question.
+2. **Depth level**: `Beginner` / `Intermediate` / `Advanced` / `Research-grade`
+3. **Angle or use-case** (optional): "I need this for a job interview", "building a product", "writing an essay", "pure curiosity"
+4. **Confidence threshold** — default **88%**. Mention it; let the user adjust (see `references/scoring-rubric.md` for guidance).
+5. **Time vs. depth preference**: "Fast overview" (cap 3 iterations) or "No shortcuts" (run to threshold, no cap)
+
+### 0b. Initialize Loop State
+Track this throughout all phases:
+```
+topic: ""
+level: ""
+threshold: 88
+iteration: 0
+confidence_score: 0
+source_registry: []          # all sources found, with type and quality rating
+knowledge_base: ""           # [KB vN] — grows and improves each loop
+qa_bank: []                  # [QA vN] — refreshed each loop
+gap_log: []                  # running list of every gap ever found
+gaps_open: []                # gaps not yet closed
+gaps_closed: []              # gaps resolved (with which source closed them)
+cross_conflicts: []          # facts where sources disagreed — tracked explicitly
+```
+
+### 0c. Tell the User
+```
+🚀 Self-Improving Learner activated
+Topic: [topic]
+Level: [level]
+Confidence target: [threshold]%
+Mode: Exhaustive multi-source harvest + iterative self-improvement loop
+
+I will pull from every available source type, test my own knowledge,
+find every gap, research it, rewrite my understanding, and repeat
+until I hit [threshold]% confidence — then deliver your mastery package.
+
+Starting now. I'll send you a progress update after each iteration.
+```
+
+---
+
+## Phase 1 — Exhaustive Multi-Source Harvest
+
+This is the most comprehensive research phase possible. Run it fully on iteration 1.
+On subsequent iterations, re-run only the source types relevant to open gaps.
+
+### SOURCE TYPES — harvest ALL of these:
+
+#### 🌐 1. Encyclopedic & Reference Sources
+- Wikipedia main article + all linked sub-articles (use `web_fetch` on each)
+- Britannica, Encyclopedia.com, or domain-specific encyclopedias
+- Official documentation (if topic has one — e.g., language spec, product docs, standards body)
+- Government/institutional sites (.gov, .edu, .org) where relevant
+- **Queries**: `"[topic] overview"`, `"[topic] fundamentals"`, `"[topic] complete guide"`, `"[topic] wikipedia"`
+
+#### 📰 2. News & Current Developments
+- Search for recent news articles (last 1–2 years) on the topic
+- Look for: breakthroughs, controversies, policy changes, new research, updated understanding
+- Fetch full articles with `web_fetch`, not just snippets
+- **Queries**: `"[topic] 2024 2025"`, `"[topic] latest developments"`, `"[topic] recent research"`, `"[topic] new findings"`
+
+#### 🎓 3. Academic & Research Sources
+- Search for seminal papers, systematic reviews, meta-analyses, key authors in the field
+- Fetch abstracts and conclusions of key papers via `web_fetch`
+- Search: preprints (arxiv.org), PubMed (medical/bio), SSRN (social sciences), JSTOR
+- **Queries**: `"[topic] research paper"`, `"[topic] systematic review"`, `"[topic] site:arxiv.org"`, `"[topic] site:pubmed.ncbi.nlm.nih.gov"`, `"[topic] meta-analysis"`
+
+#### 📚 4. Books & Long-form Educational Content
+- Search for the canonical books on the topic (most cited, most recommended)
+- Find book summaries, chapter outlines, key takeaways via review sites
+- Look for free PDFs, open textbooks, university course materials
+- **Queries**: `"best books on [topic]"`, `"[topic] textbook pdf"`, `"[topic] open courseware"`, `"[topic] MIT OCW"`, `"[topic] coursera syllabus"`, `"[topic] open textbook"`
+
+#### 💬 5. Expert Discussions, Forums & Communities
+- Reddit: `site:reddit.com "[topic]"` — high-karma posts and expert comment threads
+- Stack Exchange/Overflow: canonical answers for technical topics
+- Quora: conceptual and "explain like I'm X" type explanations
+- HackerNews: nuanced expert takes on tech/science topics
+- **Queries**: `"[topic] site:reddit.com"`, `"[topic] explained site:stackoverflow.com"`, `"[topic] site:news.ycombinator.com"`, `"[topic] site:quora.com"`, `"[topic] discussion forum"`
+
+#### 🎥 6. Video & Lecture Transcripts
+- YouTube lecture transcripts, Khan Academy notes, TED talk transcripts
+- University lecture notes: MIT OpenCourseWare, Stanford Online, Harvard OpenCourseWare
+- Fetch transcripts via `web_fetch` on video pages
+- **Queries**: `"[topic] lecture notes pdf"`, `"[topic] transcript"`, `"[topic] site:khanacademy.org"`, `"[topic] yale lectures"`, `"[topic] mit lecture transcript"`
+
+#### 🔬 7. Expert Blogs, Substack & Practitioner Writing
+- Renowned blogs from domain practitioners and researchers writing accessibly
+- Substack essays, Medium deep-dives from credentialed authors
+- Think tanks, research institutes, policy papers where relevant
+- **Queries**: `"[topic] expert blog"`, `"[topic] deep dive substack"`, `"[topic] practitioner guide"`, `"[topic] explained by expert"`, `"[topic] field notes"`
+
+#### 🗺️ 8. Frameworks, Models & Conceptual Structures
+- Diagrams, conceptual frameworks, mental models, taxonomies, timelines
+- Comparison tables, decision trees, classification systems
+- Fetch and extract the textual content behind them
+- **Queries**: `"[topic] framework model"`, `"[topic] taxonomy classification"`, `"[topic] mental model"`, `"[topic] conceptual map"`, `"[topic] comparison table"`, `"[topic] decision tree"`
+
+#### ⚔️ 9. Criticisms, Debates & Alternative Perspectives
+- Actively search for people who DISAGREE with the mainstream view
+- Debates in the field, minority positions, critiques of popular ideas, historical controversies
+- **Queries**: `"[topic] criticism"`, `"[topic] problems limitations"`, `"[topic] controversy debate"`, `"counterargument against [topic]"`, `"[topic] misconceptions"`, `"[topic] is wrong overrated"`, `"problems with [topic]"`
+
+#### 🔗 10. Cross-Domain Connections
+- Actively look for how this topic connects to related fields
+- Interdisciplinary research, surprising connections, unexpected applications
+- **Queries**: `"[topic] and [adjacent field]"`, `"[topic] applications in [domain]"`, `"intersection of [topic] and [adjacent topic]"`, `"[topic] interdisciplinary"`, `"[topic] unexpected connections"`
+
+---
+
+### 1b. Source Triage & Quality Rating
+
+After harvesting, rate every source:
+
+| Quality | Label | Criteria |
+|---------|-------|----------|
+| ⭐⭐⭐ Tier 1 | PRIMARY | Peer-reviewed, official docs, original research, authoritative reference |
+| ⭐⭐ Tier 2 | SECONDARY | Expert-written, well-cited, credible publisher or institution |
+| ⭐ Tier 3 | TERTIARY | Community content, summaries, popular press — useful for examples/angles only |
+
+Log every source in `source_registry`: URL/title, type, tier, one sentence on contribution.
+
+### 1c. Cross-Source Conflict Detection
+
+Before building the KB, scan all sources for contradictions:
+- Where do Tier 1 sources disagree with each other?
+- Where does popular understanding (Tier 3) contradict scholarly consensus (Tier 1)?
+- Log every conflict in `cross_conflicts` with both positions and the sources behind each
+
+These conflicts MUST be explicitly represented in the KB — never silently pick one side.
+
+### 1d. Build KB v1 — The Master Knowledge Base
+
+Construct a rich, structured internal document:
+
+```
+[KB v1] — [Topic] Master Knowledge Base
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. EXECUTIVE SUMMARY
+   [3–5 sentences: what is this, why it matters, what its key components are]
+
+2. CORE CONCEPTS (one subsection per major concept)
+   - Precise definition
+   - Mechanism / How it works (step by step if needed)
+   - Key properties or variants
+   - Concrete real-world example (named, specific)
+   - Common misunderstanding of this concept
+
+3. CONCEPTUAL FRAMEWORK
+   [How all core concepts relate to each other — hierarchical or networked structure]
+
+4. HISTORY & DEVELOPMENT
+   [Origin, key milestones, how understanding evolved over time]
+
+5. KEY FIGURES & SCHOOLS OF THOUGHT
+   [Who built or advanced this topic, and what each contributed]
+
+6. APPLICATIONS & USE CASES
+   [Where this is used, by whom, to what effect — specific examples by domain]
+
+7. DEBATES & OPEN QUESTIONS
+   [Active controversies, unresolved questions, minority positions — with sources on both sides]
+
+8. KNOWN LIMITATIONS & CRITICISMS
+   [What this topic/approach/field genuinely struggles with or cannot handle]
+
+9. CROSS-DOMAIN CONNECTIONS
+   [How this topic intersects with other fields — with specific bridges named]
+
+10. COMMON MISTAKES & MISCONCEPTIONS
+    [From research — what people most often get wrong, and the correct understanding]
+
+11. THINGS I'M UNCERTAIN ABOUT
+    [Honest gaps — updated every iteration, shrinks toward zero]
+
+12. SOURCE CONFLICT LOG
+    [Every factual dispute found, with positions and sources — never silently resolved]
+```
+
+---
+
+## Phase 2 — Deep Self-Test (every iteration)
+
+### 2a. Generate Comprehensive Q&A Bank
+
+Create **20–35 questions** per iteration across five levels:
+
+| Level | Type | Example question forms |
+|-------|------|----------------------|
+| L1 Recall | Facts, definitions | "What is X?", "Name the 3 types of Y", "When did Z happen?" |
+| L2 Understanding | Mechanisms, reasons | "Explain why X occurs", "How does A differ from B?", "What causes Z?" |
+| L3 Application | Scenarios, problem-solving | "Given situation X, what would happen?", "How would you use Y to solve Z?" |
+| L4 Analysis | Critique, breakdown | "What are the weaknesses of X?", "Why might Y fail in context Z?" |
+| L5 Synthesis | Integration, creativity | "Connect X to Y across domains", "What would a critic of X argue?", "What does X imply about Z?" |
+
+Also include at least **3 adversarial questions** designed to probe the edges:
+- "What does the mainstream view of X get wrong?"
+- "Name a case where X breaks down entirely"
+- "What would falsify the core claim of X?"
+
+Label the bank **[QA v{iteration}]**.
+
+### 2b. Answer Every Question — Using KB Only
+
+For each question:
+- Write a full answer using ONLY the current knowledge base (no new searches here)
+- Rate confidence: `HIGH / MEDIUM / LOW / UNKNOWN`
+- Note if the answer draws from one source (fragile) vs. multiple sources (robust)
+
+### 2c. Adversarial Self-Critique
+
+After answering, apply the adversarial reviewer lens:
+1. **Challenge HIGH-confidence answers** — find a counter-example or edge case that breaks it
+2. **Check for circular reasoning** — is the answer just restating the question?
+3. **Check for single-source fragility** — backed by only one source?
+4. **Check for missing mechanism** — do you know *what* but not *why* or *how*?
+5. **Check for missing example** — is every claim grounded in a real, named case?
+6. **Check for recency** — could this understanding be outdated?
+7. **Check for coverage bias** — did you only research mainstream views?
+
+### 2d. Score Each Answer
+
+Use the rubric in `references/scoring-rubric.md`. Summary:
+- **STRONG (2pt)**: Complete, accurate, exemplified, multi-source-backed, mechanism explained
+- **ACCEPTABLE (1pt)**: Mostly correct but thin — missing example, nuance, or second source
+- **WEAK (0.5pt)**: Vague, circular, single-source, missing mechanism
+- **FAILED (0pt)**: Wrong, empty, contradictory, or reveals a misconception
+
+Calculate: `confidence_score = (total_earned / total_possible) × 100`
+
+### 2e. Extract & Classify All Gaps
+
+Every WEAK or FAILED answer generates a gap entry:
+```
+Gap #[N]
+Question: [the question]
+Issue: [what's missing]
+Type: [MISSING_FACT | SHALLOW_UNDERSTANDING | NO_EXAMPLE | CONTRADICTORY |
+       SINGLE_SOURCE | OUTDATED | MISSING_MECHANISM | COVERAGE_BIAS]
+Targeted search query: "[query to fix it]"
+Priority: [HIGH | MEDIUM | LOW]
+```
+
+---
+
+## Phase 3 — Exhaustive Gap-Filling Research (every iteration except final)
+
+### 3a. Triage Gaps by Priority
+
+Sort all open gaps before searching:
+- **HIGH**: Failed questions, contradictions, missing mechanisms for core concepts → attack first, always
+- **MEDIUM**: Weak answers, missing examples for secondary concepts
+- **LOW**: Thin coverage of peripheral subtopics → address if time permits
+
+Never skip a HIGH gap.
+
+### 3b. Multi-Source Gap Research
+
+For EACH gap, search across **multiple source types** based on gap type:
+
+```
+[MISSING_FACT]
+  → web_search: direct factual query
+  → web_fetch: primary source (official doc, paper, reference site)
+  → web_search: verify from a 2nd independent source
+
+[SHALLOW_UNDERSTANDING]
+  → web_search: "[concept] mechanism explained step by step"
+  → web_fetch: best article
+  → web_search: "[concept] site:reddit.com OR site:stackexchange.com"
+  → web_fetch: best practitioner explanation
+
+[NO_EXAMPLE]
+  → web_search: "[concept] real world example case study"
+  → web_fetch: most concrete example found
+  → web_search: "[concept] in practice [domain]"
+
+[CONTRADICTORY]
+  → web_search: "[claim A] vs [claim B] comparison"
+  → web_fetch: best comparative analysis
+  → web_search: academic/expert resolution of the conflict
+  → Document BOTH positions if still unresolved
+
+[SINGLE_SOURCE]
+  → web_search: find 2+ independent sources confirming the fact
+  → If 2nd source disagrees → reclassify as CONTRADICTORY
+
+[MISSING_MECHANISM]
+  → web_search: "how does [concept] actually work"
+  → web_search: "[concept] step by step process explained"
+  → web_fetch: most mechanistic explanation found
+
+[OUTDATED]
+  → web_search: "[concept] current understanding 2024 2025"
+  → Check: was older view superseded or merely supplemented?
+
+[COVERAGE_BIAS]
+  → web_search: "criticism of [concept]"
+  → web_search: "alternative view on [concept]"
+  → web_search: "minority position [topic] [concept]"
+```
+
+**Minimum search budget per gap:**
+- HIGH → minimum 3 searches + 2 web_fetches
+- MEDIUM → minimum 2 searches + 1 web_fetch
+- LOW → minimum 1 search + 1 web_fetch
+
+### 3c. Source Triangulation
+
+For every new fact added to the KB:
+- 2+ independent Tier 1/2 sources agree → mark `[VERIFIED]`
+- Only one source → mark `[SINGLE_SOURCE — unverified]`
+- Sources conflict → mark `[DISPUTED: Source A says X | Source B says Y]`
+
+Only `[VERIFIED]` facts can earn STRONG scores in the next test round.
+
+### 3d. KB Rewrite — Full Pass
+
+Produce **[KB v{iteration+1}]** — fully rewritten, not just appended:
+
+1. Correct all factual errors from self-critique
+2. Fill every gap with researched, triangulated content
+3. Add concrete named examples for every abstract claim
+4. Strengthen SINGLE_SOURCE items with corroborating sources
+5. Expand "Debates & Open Questions" with new perspectives
+6. Update "Common Mistakes" with new misconceptions encountered
+7. Add to "Cross-Domain Connections" if new bridges found
+8. Shrink "Things I'm Uncertain About" — move resolved items to proper KB sections
+9. Update `cross_conflicts` log
+10. Add all new sources to `source_registry` with tiers
+
+### 3e. KB Quality Checklist
+
+Before closing the iteration:
+- [ ] Every core concept has: definition + mechanism + real example + common mistake
+- [ ] Every claim is backed by at least one named source (ideally 2+)
+- [ ] No circular definitions remain
+- [ ] All contradictions are documented — not silently resolved
+- [ ] The framework section shows how all concepts connect
+- [ ] At least one criticism/limitation of the topic is captured
+
+---
+
+## Phase 4 — Loop Control & Progress Reporting
+
+### 4a. User Update (after every iteration)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 Iteration [N] Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Confidence score:    [X]%  (target: [threshold]%)
+Score change:        [+X% from last iteration]
+Sources harvested:   [total] across [N] source types
+Gaps found:          [N this iteration]
+Gaps closed:         [N this iteration]
+Gaps remaining:      [N] ([H] high / [M] med / [L] low)
+
+Top gaps still open:
+  • [Gap 1 — type + description]
+  • [Gap 2 — type + description]
+
+→ Status: [Continuing / Threshold reached / Stopping — reason]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### 4b. Loop Decision Logic
+
+**CONTINUE if ANY of:**
+- `confidence_score < threshold`
+- Any HIGH priority gap remains open
+- Score improved ≥ 3% last iteration AND still below threshold
+
+**STOP (threshold met) if ALL of:**
+- `confidence_score >= threshold` ✅
+- `high_priority_gaps == 0` ✅
+
+**STOP (with honest caveat) if:**
+- `iteration >= 12` → hard cap — log all remaining gaps in mastery report
+- Score improved < 1% for 2 consecutive iterations → diminishing returns — note this
+- No new sources found in last round → information saturation — note this
+
+---
+
+## Phase 5 — Synthesis & Mastery Package (5 Deliverables)
+
+When the loop ends, produce five polished, publication-quality deliverables.
+
+---
+
+### 📘 Deliverable 1: Master Study Guide
+
+```markdown
+# [Topic] — Complete Study Guide
+Confidence: [X]% | Sources: [N] | Source types: [N/10] | Iterations: [N]
+
+## Executive Summary
+[3–5 sentences: what this is, why it matters, what you'll know after reading]
+
+## Part 1: Foundations — Core Concepts
+### [Concept Name]
+**Definition**: [precise, unambiguous]
+**How it works**: [mechanism, step by step if needed]
+**Why it matters**: [significance, implications]
+**Real-world example**: [specific, named, concrete]
+**Common mistake**: [what people get wrong + correct understanding]
+**Verified by**: [source name(s)]
+[Repeat for each core concept]
+
+## Part 2: The Big Picture — How It All Connects
+[Structured description of how all core concepts relate — table, hierarchy, or text diagram]
+
+## Part 3: History & Evolution
+[Timeline of key developments — how understanding of this topic grew]
+
+## Part 4: Applications & Use Cases
+[Where and how this is used — specific examples by domain, with named cases]
+
+## Part 5: Active Debates & Open Questions
+[What experts still disagree about — both sides represented fairly, with sources]
+
+## Part 6: Criticisms & Limitations
+[What this topic, field, or approach genuinely struggles with or gets wrong]
+
+## Part 7: Cross-Domain Connections
+[How this topic connects to other fields — with specific bridges named]
+
+## Quick Reference Card
+| Term | Definition |
+|------|-----------|
+Key formulas / frameworks / step sequences (if applicable):
+
+## Common Mistakes to Avoid
+1. [Mistake → why it's wrong → correct understanding]
+
+## Suggested Learning Path
+[Ordered sequence of next things to study, with resources]
+
+## Top Sources Consulted
+[Top 5–8 sources by tier, with one line on what each contributed]
+```
+
+---
+
+### 🧪 Deliverable 2: Comprehensive Q&A Test Bank
+
+```markdown
+# [Topic] — Self-Test Q&A Bank
+[N] questions across 5 levels + adversarial. Cover answers to test yourself.
+
+## Level 1 — Recall (Foundational Facts)
+Q1: ...
+A: [Full answer + source]
+...
+
+## Level 2 — Understanding (Mechanisms & Reasons)
+...
+
+## Level 3 — Application (Scenarios & Problem-Solving)
+...
+
+## Level 4 — Analysis (Critique & Breakdown)
+...
+
+## Level 5 — Synthesis (Integration & Original Thinking)
+...
+
+## Adversarial Questions (Edge Cases & Hard Challenges)
+...
+```
+
+---
+
+### 🗺️ Deliverable 3: Knowledge Map
+
+```markdown
+# [Topic] — Knowledge Map
+
+## Concept Tree
+[Topic: Core Node]
+├── Subcategory 1: [Name]
+│   ├── Concept A — [one-line definition]
+│   ├── Concept B — [one-line definition]
+│   └── Concept C — [one-line definition]
+├── Subcategory 2: [Name]
+│   └── ...
+├── Key Debates
+│   ├── [Debate 1: position A vs position B]
+│   └── [Debate 2]
+├── Applications
+│   ├── [Domain 1]
+│   └── [Domain 2]
+└── Cross-Domain Bridges
+    ├── → [Related Field 1: how they connect]
+    └── → [Related Field 2: how they connect]
+
+## Source Coverage Map
+[Mark which of the 10 source types were successfully harvested]
+✅ Encyclopedic/Reference   ✅ News/Current    ✅ Academic/Research
+✅ Books/Long-form          ✅ Expert Blogs    ✅ Forums/Community
+✅ Video/Lectures           ✅ Frameworks      ✅ Criticism/Counter
+✅ Cross-domain
+
+[Any unchecked source types explain residual uncertainty]
+```
+
+---
+
+### 📋 Deliverable 4: Full Source Registry
+
+```markdown
+# [Topic] — Complete Source Registry
+
+## Tier 1 — Primary Sources
+| # | Source | URL/Citation | Type | Contribution |
+|---|--------|-------------|------|-------------|
+
+## Tier 2 — Secondary Sources
+| # | Source | URL/Citation | Type | Contribution |
+
+## Tier 3 — Tertiary Sources
+| # | Source | URL/Citation | Type | Contribution |
+
+## Unresolved Source Conflicts
+| Claim | Source A says | Source B says | Status |
+|-------|--------------|--------------|--------|
+```
+
+---
+
+### 🏆 Deliverable 5: Mastery Report
+
+```markdown
+# [Topic] — Mastery Report
+
+## Learning Metrics
+- Total iterations: [N]
+- Final confidence score: [X]%
+- Questions mastered (STRONG): [N/total]
+- Sources consulted: [N] across [N/10] source types
+- Total gaps found: [N]
+- Gaps closed: [N]
+- Remaining open gaps: [N]
+
+## Knowledge Strength Assessment
+
+### High Confidence ✅ (STRONG — ready to use or explain)
+[List of concepts]
+
+### Adequate Understanding 🟡 (ACCEPTABLE — solid but could go deeper)
+[List of concepts]
+
+### Residual Uncertainty 🟠 (WEAK/UNRESOLVED — needs more research)
+[Honest list + what specifically is still unclear]
+
+## Source Coverage Assessment
+[Which source types were consulted — gaps in coverage explain residual uncertainty]
+
+## Top Insights from the Loop
+[5–7 most interesting, surprising, or counterintuitive things discovered]
+
+## Unresolved Debates
+[Active controversies the loop could not definitively resolve — and why]
+
+## Recommended Next Steps
+
+### For Deeper Learning
+[What to study next, in what order, with specific resources]
+
+### For Practical Application
+[Exercises, projects, experiments to solidify understanding]
+
+### For Research-Level Mastery
+[Specific papers, experts, or communities to engage with]
+```
+
+---
+
+## Core Operating Principles
+
+**Never fake confidence.** The loop only ends when the score genuinely reaches threshold. Inflating scores defeats the entire purpose. If the score stops improving, admit it and document why.
+
+**Exhaust every source type before concluding.** Before reporting a gap as "unfillable", verify all 10 source types were attempted. A missing fact in web articles might exist in a forum post, academic paper, or expert blog.
+
+**Represent dissent.** Every topic has minority views, critics, and unresolved debates. These must appear in the KB and study guide — not just mainstream consensus. Knowledge that ignores dissent is fragile.
+
+**Triangulate all claims.** A claim backed by one source is marked `[SINGLE_SOURCE]` everywhere. Two+ independent Tier 1/2 sources needed for `[VERIFIED]` status. Only verified facts earn STRONG scores.
+
+**Show the work.** Progress updates after every iteration keep the user informed. Never leave them waiting with no information.
+
+**Source diversity = knowledge robustness.** A KB drawn only from one source type is brittle. The source coverage map in the Knowledge Map deliverable shows exactly which types were tapped — gaps explain residual uncertainty.
+
+**Full rewrites, not just appends.** Each iteration produces a fully rewritten KB, not just added sections. Quality and coherence improve with every pass.
+
+---
+
+## Quick Reference: The Full Loop
+
+```
+PHASE 0: Setup
+  → Confirm topic, level, threshold, depth mode
+  → Initialize loop state
+         ↓
+PHASE 1: Exhaustive Multi-Source Harvest
+  → 10 source types × multiple queries each
+  → web_search + web_fetch across ALL types
+  → Source triage: tier 1 / 2 / 3 rating
+  → Cross-source conflict detection
+  → Build KB v1 (12 sections, fully structured)
+         ↓
+┌──────────────────────────────────────────────────┐
+│  PHASE 2: Deep Self-Test                         │
+│    → 20–35 questions across 5 levels             │
+│    → + 3 adversarial questions                   │
+│    → Answer from KB only (no external search)    │
+│    → Adversarial self-critique (7 checks)        │
+│    → Score each answer STRONG/ACCEPTABLE/WEAK/   │
+│      FAILED using scoring rubric                 │
+│    → Extract & classify all gaps by type         │
+│      + priority                                  │
+│                                                  │
+│  PHASE 3: Exhaustive Gap-Filling                 │
+│    → Triage gaps by HIGH/MEDIUM/LOW priority     │
+│    → Multi-source search per gap type            │
+│    → Source triangulation on every new fact      │
+│    → Full KB rewrite (not just append)           │
+│    → KB quality checklist before closing         │
+│                                                  │
+│  PHASE 4: Progress Report + Loop Decision        │
+│    → Print iteration update to user              │
+│    → Continue: score < threshold OR HIGH gaps    │
+│    → Stop: threshold met + no HIGH gaps          │
+│    → Stop (capped): 12 iterations or saturation  │
+└──────────────────────────────────────────────────┘
+         ↓ loop ends
+PHASE 5: Generate 5-Part Mastery Package
+  → 📘 Study Guide (complete structured reference)
+  → 🧪 Q&A Test Bank (5 levels + adversarial)
+  → 🗺️ Knowledge Map (concept tree + source coverage)
+  → 📋 Source Registry (full, tiered, conflict log)
+  → 🏆 Mastery Report (metrics + residual gaps + next steps)
+```
+
+---
+
+Reference files (read when needed):
+- `references/scoring-rubric.md` — detailed self-scoring calibration
+- `references/source-harvest-guide.md` — expanded per-source-type search strategies
+- `references/gap-filling-playbook.md` — deep tactics for each gap type
